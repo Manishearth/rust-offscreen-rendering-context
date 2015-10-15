@@ -1,6 +1,8 @@
 extern crate glutin;
 
 use platform::NativeGLContextMethods;
+use glutin::{HeadlessContext, HeadlessRendererBuilder};
+
 #[cfg(feature="texture_surface")]
 use layers::platform::surface::NativeDisplay;
 
@@ -8,7 +10,7 @@ use layers::platform::surface::NativeDisplay;
 struct NativeDisplay;
 
 pub struct NativeGLContext {
-    context: glutin::HeadlessContext,
+    context: HeadlessContext,
     display: NativeDisplay,
 }
 
@@ -21,22 +23,23 @@ impl NativeGLContextMethods for NativeGLContext {
 
     fn create_headless() -> Result<Self, &'static str> {
         let display = NativeDisplay;
-        return Ok(NativeGLContext {
-            context: glutin::HeadlessRendererBuilder::new(128, 128).build().unwrap(),
+
+        let builder = HeadlessRendererBuilder::new(128, 128);
+        let glutin_context = try!(builder.build().or(Err("Glutin Headless context creation error")));
+
+        Ok(NativeGLContext {
+            context: glutin_context,
             display: display,
-        });
+        })
     }
 
     fn is_current(&self) -> bool {
-        return self.context.is_current();
+        self.context.is_current()
     }
 
     fn make_current(&self) -> Result<(), &'static str> {
         unsafe {
-            match self.context.make_current() {
-                Ok(()) => Ok(()),
-                Err(_) => Err("MakeCurrent failed")
-            }
+            self.context.make_current().or(Err("MakeCurrent failed"))
         }
     }
 
