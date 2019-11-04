@@ -78,7 +78,7 @@ impl Device {
             // Create config attributes.
             let config_attributes = [
                 egl::SURFACE_TYPE as EGLint,         egl::PBUFFER_BIT as EGLint,
-                egl::RENDERABLE_TYPE as EGLint,      egl::OPENGL_ES2_BIT as EGLint,
+                egl::RENDERABLE_TYPE as EGLint,      egl::OPENGL_ES3_BIT as EGLint,
                 egl::BIND_TO_TEXTURE_RGBA as EGLint, 1 as EGLint,
                 egl::RED_SIZE as EGLint,             color_size,
                 egl::GREEN_SIZE as EGLint,           color_size,
@@ -148,7 +148,7 @@ impl Device {
             let egl_config_id = get_config_attr(self.native_display.egl_display(),
                                                 config,
                                                 egl::CONFIG_ID as EGLint);
-            let egl_context_client_version = attributes.version.major as EGLint;
+            let egl_context_client_version = 3;
 
             Ok(ContextDescriptor { egl_config_id, egl_context_client_version })
         }
